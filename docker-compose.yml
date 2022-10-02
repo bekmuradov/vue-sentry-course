@@ -1,0 +1,26 @@
+version: "3.8"
+services:
+  app:
+    build:
+      dockerfile: Dockerfile
+      context: "./"
+      target: "develop-stage"
+    image: node:14.19.0-alpine
+    container_name: vue_sentry_course
+    working_dir: /app
+    volumes:
+      - "/app/node_modules"
+      - "./:/app"
+    tty: true
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+    entrypoint: "/bin/bash -c"
+    command:
+      - |
+        yarn && yarn dev || (\
+        echo '⛔ `yarn dev` failed, but the container is running...' && \
+        tail -f /dev/null \
+        )
+    ports:
+      - "8080:8080"
